@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include "shell.h"
 int32_t signExtend(uint32_t imm) {
+    //通过取地址&得到imm的地址，然后将其转换为int16_t*类型的指针
     int32_t signed_imm = *((int16_t*)&imm);
+    //将16位有符号整数扩展为32位有符号整数
     uint32_t extended_imm = *((uint32_t*)&signed_imm);
     return extended_imm;
 }
