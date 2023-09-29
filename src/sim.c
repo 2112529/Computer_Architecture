@@ -269,7 +269,7 @@ void process_instruction()
                 case 0x0: {
                     printf("bltz instr\n");
                     if ((CURRENT_STATE.REGS[rs] & 0x80000000) != 0) {
-                        NEXT_STATE.PC = CURRENT_STATE.PC + signExtend(imm) + 4;
+                        NEXT_STATE.PC = CURRENT_STATE.PC + (signExtend(imm)<<2) + 4;
                     } else {
                         NEXT_STATE.PC = CURRENT_STATE.PC + 4;
                     }
@@ -279,7 +279,7 @@ void process_instruction()
                     printf("bltzal instr\n");
                     NEXT_STATE.REGS[31] = CURRENT_STATE.PC + 4;
                     if ((CURRENT_STATE.REGS[rs] & 0x80000000) != 0) {
-                        NEXT_STATE.PC = CURRENT_STATE.PC + signExtend(imm) + 4;
+                        NEXT_STATE.PC = CURRENT_STATE.PC + (signExtend(imm)<<2) + 4;
                     } else {
                         NEXT_STATE.PC = CURRENT_STATE.PC + 4;
                     }
@@ -288,7 +288,7 @@ void process_instruction()
                 case 0x1: {
                     printf("bgez instr\n");
                     if ((CURRENT_STATE.REGS[rs] & 0x80000000) == 0) {
-                        NEXT_STATE.PC = CURRENT_STATE.PC + signExtend(imm) + 4;
+                        NEXT_STATE.PC = CURRENT_STATE.PC + (signExtend(imm)<<2) + 4;
                     } else {
                         NEXT_STATE.PC = CURRENT_STATE.PC + 4;
                     }
@@ -298,7 +298,7 @@ void process_instruction()
                     printf("bgezal instr\n");
                     NEXT_STATE.REGS[31] = CURRENT_STATE.PC + 4;
                     if ((CURRENT_STATE.REGS[rs] & 0x80000000) == 0) {
-                        NEXT_STATE.PC = CURRENT_STATE.PC + signExtend(imm) + 4;
+                        NEXT_STATE.PC = CURRENT_STATE.PC + (signExtend(imm)<<2) + 4;
                     } else {
                         NEXT_STATE.PC = CURRENT_STATE.PC + 4;
                     }
@@ -342,7 +342,7 @@ void process_instruction()
         case 0x06:
             printf("blez instr\n"); 
             if (CURRENT_STATE.REGS[rs]<=0)
-                {imm=signExtend(imm);
+                {imm=signExtend(imm)<<2;
                 NEXT_STATE.PC=CURRENT_STATE.PC+imm;}
             else
                 NEXT_STATE.PC=CURRENT_STATE.PC+4;
@@ -351,7 +351,7 @@ void process_instruction()
         case 0x07:
             printf("bgtz instr\n");
             if (CURRENT_STATE.REGS[rs]>0)
-                {imm=signExtend(imm);
+                {imm=signExtend(imm)<<2;
                 NEXT_STATE.PC=CURRENT_STATE.PC+imm;}
             else
                 NEXT_STATE.PC=CURRENT_STATE.PC+4;
