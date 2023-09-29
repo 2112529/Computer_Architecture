@@ -1,14 +1,9 @@
 #include <stdio.h>
 #include "shell.h"
 int32_t signExtend(uint32_t imm) {
-    // Left shift by 2 bits
-    // Check the original sign bit (now at position 2) and sign-extend if necessary
-    if (imm >= 0x00008000) { // Check if the 16th bit is set
-        imm |= 0xFFFF0000;  // Sign-extend
-    }
-    imm <<= 2;
-
-    return (int32_t)imm;   // Cast to signed integer for proper sign extension
+    int32_t signed_imm = *((int16_t*)&imm);
+    uint32_t extended_imm = *((uint32_t*)&signed_imm);
+    return extended_imm;
 }
 uint32_t signExtend16bits(uint16_t imm) {
     int32_t signed_imm = *((int16_t*)&imm);
@@ -62,7 +57,7 @@ void process_instruction()
     switch(op){
         case 0x09:
             printf("addiu instr\n");
-            NEXT_STATE.REGS[rd]=CURRENT_STATE.REGS[rs]+imm;
+            NEXT_STATE.REGS[rt]=CURRENT_STATE.REGS[rs]+signExtend(imm);
             NEXT_STATE.PC=CURRENT_STATE.PC+4;
             break;
         case 0x02:
@@ -324,7 +319,7 @@ void process_instruction()
             printf("beq instr\n");
             //mips beq
             if (CURRENT_STATE.REGS[rs]==CURRENT_STATE.REGS[rt])
-                {imm=signExtend(imm);
+                {imm=signExtend(imm)<<2;
                 NEXT_STATE.PC=CURRENT_STATE.PC+imm+4;}
             else
                 NEXT_STATE.PC=CURRENT_STATE.PC+4;
@@ -338,7 +333,7 @@ void process_instruction()
                 && CURRENT_STATE.REGS[rt]!=0xFFFFFFFF)
             {
                 /// Sign extend the uint32_t imm and then shift by 2 bits
-                imm=signExtend(imm);
+                imm=signExtend(imm)<<2;
                 NEXT_STATE.PC=CURRENT_STATE.PC+imm+4;
             }
             else
